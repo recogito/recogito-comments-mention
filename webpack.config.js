@@ -1,6 +1,7 @@
 const path = require('path');
 const fs = require('fs');
 
+const HtmlWebpackPlugin = require('html-webpack-plugin');
 const TerserPlugin = require('terser-webpack-plugin');
 
 const APP_DIR = fs.realpathSync(process.cwd());
@@ -50,5 +51,19 @@ module.exports = {
       },
       { test: /\.css$/,  use: [ 'style-loader', 'css-loader'] },
     ]
-  }
+  },
+  devServer: {
+    contentBase: resolveAppPath('public'),
+    compress: true,
+    hot: true,
+    host: process.env.HOST || 'localhost',
+    port: 3000,
+    publicPath: '/'
+  },
+  plugins: [
+    new HtmlWebpackPlugin ({
+      inject: 'head',
+      template: resolveAppPath('public/index.html')
+    })
+  ]
 }
