@@ -2,8 +2,7 @@
   "name": "@recogito/recogito-comments-mention",
   "version": "0.1.0",
   "description": "A Recogito comment thread widget that lets you @-mention users like on Twitter",
-  "main": "dist/recogito-comments-mention.min.js",
-  "module": "dist/recogito-comments-mention.min.js",
+  "main": "src/index.jsx",
   "scripts": {
     "start": "webpack-dev-server --open --mode=development",
     "build": "webpack --mode=production",
