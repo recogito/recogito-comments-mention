@@ -1,5 +1,4 @@
-import React from 'preact/compat';
-import { useState } from 'preact/hooks';
+import React, { Component } from 'preact/compat';
 import TimeAgo from 'timeago-react';
 import DropdownMenu from '@recogito/recogito-client-core/src/editor/widgets/comment/DropdownMenu';
 import { ChevronDownIcon } from '@recogito/recogito-client-core/src/Icons';
@@ -8,80 +7,92 @@ import i18n from '@recogito/recogito-client-core/src/i18n';
 import TextAreaWithMentions from './TextAreaWithMentions';
 
 /** A single comment inside the CommentWidget **/
-const Comment = props => {
+class Comment extends Component {
 
-  const [isEditable, setIsEditable] = useState(false);
-  const [isMenuVisible, setIsMenuVisible] = useState(false);
+  constructor(props) {
+    super(props);
 
-  const onMakeEditable = _ => {
-    setIsEditable(true);
-    setIsMenuVisible(false);
+    this.state = {
+      isEditable: false,
+      isMenuVisible: false
+    }
   }
 
-  const onDelete = _ => {
-    props.onDelete(props.body);
-    setIsMenuVisible(false);
-  }
+  render() {
+    const onMakeEditable = _ => {
+      this.setState({
+        isEditable: true,
+        isMenuVisible: true
+      });
+    }
 
-  const onUpdateComment = evt =>
-    props.onUpdate(props.body, { ...props.body, value: evt.target.value });
+    const onDelete = _ => {
+      this.props.onDelete(this.props.body);
 
-  const onChangePurpose = evt =>
-    props.onUpdate(props.body, { ...props.body, purpose: evt.value });
+      this.setState({ isMenuVisible: false });
+    }
 
-  const timestamp = props.body.modified || props.body.created;
+    const onUpdateComment = evt =>
+      this.props.onUpdate(this.props.body, { ...this.props.body, value: evt.target.value });
 
-  const creatorInfo = props.body.creator &&
-    <div className="r6o-lastmodified">
-      <span className="r6o-lastmodified-by">{props.body.creator.name || props.body.creator.id}</span>
-      {props.body.created &&
-        <span className="r6o-lastmodified-at">
-          <TimeAgo
-            datetime={props.env.toClientTime(timestamp)}
-            locale={i18n.locale()} />
-        </span>
-      }
-    </div>
+    const onChangePurpose = evt =>
+      this.props.onUpdate(this.props.body, { ...this.props.body, purpose: evt.value });
 
-  return props.readOnly ? (
-    <div className="r6o-widget comment">
-      <div className="r6o-readonly-comment">{props.body.value}</div>
-      { creatorInfo}
-    </div>
-  ) : (
-    <div className={isEditable ? "r6o-widget comment editable" : "r6o-widget comment"}>
-      <TextAreaWithMentions
-        editable={isEditable}
-        content={props.body.value}
-        onChange={onUpdateComment}
-        onSaveAndClose={props.onSaveAndClose}
-        userSuggestions={props.userSuggestions || []}
-      />
+    const timestamp = this.props.body.modified || this.props.body.created;
 
-      { !isEditable && creatorInfo}
-
-      { props.purposeSelector &&
-        <PurposeSelect
-          editable={isEditable}
-          content={props.body.purpose}
-          onChange={onChangePurpose}
-          onSaveAndClose={props.onSaveAndClose}
-        />}
-
-      <div
-        className={isMenuVisible ? "r6o-icon r6o-arrow-down r6o-menu-open" : "r6o-icon r6o-arrow-down"}
-        onClick={() => setIsMenuVisible(!isMenuVisible)}>
-        <ChevronDownIcon width={12} />
+    const creatorInfo = this.props.body.creator &&
+      <div className="r6o-lastmodified">
+        <span className="r6o-lastmodified-by">{this.props.body.creator.name || this.props.body.creator.id}</span>
+        {this.props.body.created &&
+          <span className="r6o-lastmodified-at">
+            <TimeAgo
+              datetime={this.props.env.toClientTime(timestamp)}
+              locale={i18n.locale()} />
+          </span>
+        }
       </div>
 
-      { isMenuVisible &&
-        <DropdownMenu
-          onEdit={onMakeEditable}
-          onDelete={onDelete}
-          onClickOutside={() => setIsMenuVisible(false)} />
-      }
-    </div>
-  )
+    return this.props.readOnly ? (
+      <div className="r6o-widget comment">
+        <div className="r6o-readonly-comment">{this.props.body.value}</div>
+        { creatorInfo}
+      </div>
+    ) : (
+      <div className={this.state.isEditable ? "r6o-widget comment editable" : "r6o-widget comment"}>
+        <TextAreaWithMentions
+          editable={this.state.isEditable}
+          content={this.props.body.value}
+          onChange={onUpdateComment}
+          onSaveAndClose={this.props.onSaveAndClose}
+          userSuggestions={this.props.userSuggestions || []}
+        />
+
+        { !this.state.isEditable && creatorInfo}
+
+        { this.props.purposeSelector &&
+          <PurposeSelect
+            editable={this.state.isEditable}
+            content={this.props.body.purpose}
+            onChange={onChangePurpose}
+            onSaveAndClose={this.props.onSaveAndClose}
+          />}
+
+        <div
+          className={this.state.isMenuVisible ? "r6o-icon r6o-arrow-down r6o-menu-open" : "r6o-icon r6o-arrow-down"}
+          onClick={() => this.setState({ isMenuVisible: !this.state.isMenuVisible })}>
+          <ChevronDownIcon width={12} />
+        </div>
+
+        { this.state.isMenuVisible &&
+          <DropdownMenu
+            onEdit={onMakeEditable}
+            onDelete={onDelete}
+            onClickOutside={() => this.setState({ isMenuVisible: false })} />
+        }
+      </div>
+    )
+
+  }
 
 }
 

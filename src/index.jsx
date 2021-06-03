@@ -1,4 +1,5 @@
 import React from 'preact/compat';
+import "preact/debug";
 import Comment from './Comment';
 import i18n from '@recogito/recogito-client-core/src/i18n';
 import PurposeSelect, { PURPOSES } from '@recogito/recogito-client-core/src/editor/widgets/comment/PurposeSelect';
