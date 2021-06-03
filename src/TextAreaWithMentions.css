@@ -1,0 +1,192 @@
+@import url(https://fonts.googleapis.com/css?family=Open+Sans);
+
+.colorselector-widget {
+    padding: 5px;
+    border-bottom: 1px solid #e5e5e5;
+}
+
+.colorselector-widget button {
+    outline: none;
+    border: none;
+    display: inline-block;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    cursor: pointer;
+    opacity: 0.5;
+    margin: 4px;
+}
+
+.colorselector-widget button.selected,
+.colorselector-widget button:hover {
+    opacity: 1;
+}
+
+svg.a9s-annotationlayer .a9s-annotation.RED .a9s-outer {
+    stroke: red;
+    stroke-width: 3;
+    fill: rgba(255, 0, 0, 0.3);
+}
+
+svg.a9s-annotationlayer .a9s-annotation.GREEN .a9s-outer {
+    stroke: green;
+    stroke-width: 3;
+    fill: rgba(0, 255, 0, 0.3);
+}
+
+svg.a9s-annotationlayer .a9s-annotation.BLUE .a9s-outer {
+    stroke: blue;
+    stroke-width: 3;
+    fill: rgba(0, 0, 255, 0.3);
+}
+
+svg.a9s-annotationlayer .a9s-annotation.RED .a9s-inner,
+svg.a9s-annotationlayer .a9s-annotation.GREEN .a9s-inner,
+svg.a9s-annotationlayer .a9s-annotation.BLUE .a9s-inner {
+    fill: transparent;
+    stroke: none;
+}
+
+.dropbtn {
+    background-color: #3498DB;
+    color: white;
+    padding: 16px;
+    font-size: 16px;
+    border: none;
+    cursor: pointer;
+}
+
+.dropbtn:hover,
+.dropbtn:focus {
+    background-color: #2980B9;
+}
+
+.dropdown {
+    position: absolute !important;
+    display: inline-block;
+    z-index: 2;
+}
+
+.dropdown-content {
+    display: none;
+    position: absolute;
+    background-color: #f1f1f1;
+    overflow: auto;
+    z-index: 1;
+    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+}
+
+.dropdown-content a {
+    color: black;
+    padding: 12px 16px;
+    text-decoration: none;
+    display: block;
+}
+
+.dropdown a:hover {
+    background-color: #ddd;
+}
+
+.show {
+    display: block !important;
+}
+
+.TextArea {
+    width: 95%;  /* To account for the dropdown button added to the top right corner. */
+    resize: none;
+    height: 100px;
+}
+
+/* Highlights */
+
+*, *::before, *::after {
+    box-sizing: border-box;
+}
+
+.container {
+    display: block;
+    margin: 0 auto;
+    transform: translateZ(0);
+    -webkit-text-size-adjust: none;
+    padding: 0% !important;
+  }
+
+textarea {
+    margin: 0;
+    border-radius: 0;
+  }
+
+.backdrop {
+    position: absolute;
+    z-index: -1;
+    overflow: auto;
+    pointer-events: none;
+    transition: transform 1s;
+    width: 100%;
+    height: 100% !important;
+}
+
+.highlights {
+    white-space: pre-wrap;
+	word-wrap: break-word;
+	color: transparent;
+}
+
+textarea {
+    display: block;
+    z-index: 2;
+    margin: 0;
+    border-radius: 0;
+    color: #444;
+    background-color: transparent;
+    overflow: auto;
+    resize: none;
+    transition: transform 1s;
+    border: none !important;
+    border-bottom: 1px solid #e5e5e5 !important;
+  }
+  
+  .highlights {
+    color: transparent;
+  }
+  
+  mark {
+    border-radius: 3px;
+    color: transparent;
+    background-color: #b1d5e5;
+  }
+
+  textarea:focus, button:focus {
+    outline: none;
+  }
+
+  .backdrop {
+    background-color: #ecf0f1;
+  }
+
+  .highlights, textarea {
+    padding: 10px;
+    font: 14px 'Open Sans', sans-serif;
+    letter-spacing: 1px;
+  }
+
+   .unorderedList {
+    margin-top: 0px;
+    margin-bottom: 0px;
+    padding-left: 10px;
+    padding-right: 10px;
+    padding-top: 10px;
+    padding-bottom: 10px;
+    background-color: white;
+    color: grey;
+    z-index: 9999;
+    box-shadow: #2980B9;
+  } 
+
+  a:hover {
+      background: #2980B9;
+  }
+
+  textarea::placeholder {
+    color:#c2c2c2;
+  }

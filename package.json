@@ -27,6 +27,7 @@
   },
   "dependencies": {
     "@recogito/recogito-client-core": "^1.1.0",
-    "preact": "^10.4.1"
+    "preact": "^10.4.1",
+    "timeago-react": "^3.0.1"
   }
 }
