@@ -22,7 +22,7 @@ class Comment extends Component {
     const onMakeEditable = _ => {
       this.setState({
         isEditable: true,
-        isMenuVisible: true
+        isMenuVisible: false
       });
     }
 
@@ -32,8 +32,8 @@ class Comment extends Component {
       this.setState({ isMenuVisible: false });
     }
 
-    const onUpdateComment = evt =>
-      this.props.onUpdate(this.props.body, { ...this.props.body, value: evt.target.value });
+    const onUpdateComment = value =>
+      this.props.onUpdate(this.props.body, { ...this.props.body, value: value });
 
     const onChangePurpose = evt =>
       this.props.onUpdate(this.props.body, { ...this.props.body, purpose: evt.value });

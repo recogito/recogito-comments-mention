@@ -39,11 +39,10 @@ export default class TextAreaWithMentions extends Component {
         this.textAreaElement = React.createRef()
 
         this.state = { showDropDown: false, backupUsers: users, users: users, usersMap: {} }
-        console.log('Data passed to this widget: ' + this.state.users.length);
     }
 
     componentDidMount() {
-        console.log('Component Did mount')
+        this.textAreaElement.current.addEventListener('input', this.onTextAreaInput.bind(this))
 
         // Create a users map for conversion between markup string and user-facing string.
         this.state.usersMap = {}  // Mapping of displayed usernames with the markup.
@@ -189,7 +188,6 @@ export default class TextAreaWithMentions extends Component {
     ////////// UPDATE START ////////
 
     handleKeyDown(event) {
-        console.log('Type: ' + event.type + ' Key: ' + event.key + ' Code: ' + event.code)
         var currentIndex = parseInt(this.currentFocus.split('-')[1])
         var nextIndex = 0;
         switch (event.code) {
@@ -212,7 +210,6 @@ export default class TextAreaWithMentions extends Component {
             nextIndex = this.state.users.length - 1
 
         this.currentFocus = 't-' + nextIndex
-        console.log('Next Index: ' + currentFocus)
         document.getElementById(currentFocus).focus();
     }
 
@@ -265,7 +262,6 @@ export default class TextAreaWithMentions extends Component {
         let lastIndexOfAtCharacter = textForConsideration.lastIndexOf('@')
         if (lastIndexOfAtCharacter > lastIndexOfSpaceCharacter) {
             let patternToMatch = textForConsideration.substring(lastIndexOfAtCharacter + 1)
-
             const filteredUsers = this.filterUsers(this.state.backupUsers, patternToMatch)
             if (filteredUsers.length > 0) {
                 this.clearChildNodes(this.unorderedList.current)
@@ -288,31 +284,24 @@ export default class TextAreaWithMentions extends Component {
         const coordinates = this.getCaretCoordinates(this.textAreaElement.current, this.textAreaElement.current.selectionEnd);
 
         // So that false change events are not triggered.
-        console.log('Removing Text Area Focus Out Event Listener...')
         this.textAreaElement.current.removeEventListener('focusout', this.onTextAreaFocusOut)
 
         // Account for Top scroll. 
         coordinates.top = coordinates.top - this.textAreaElement.current.scrollTop
-
-        console.log('Scroll Top: ' + this.textAreaElement.current.scrollTop)
-
-        console.log('(top, left) = (%s, %s)', coordinates.top, coordinates.left);
         this.myDropDownDiv.current.style['top'] = coordinates.top + 20 + 'px';
         this.myDropDownDiv.current.style['left'] = coordinates.left + 'px';
 
-        this.state.showDropDown = true;
+        this.setState({ showDropDown: true })
     }
 
     hideDropdown() {
-        this.state.showDropDown = false;
+        this.setState({ showDropDown: false })
     }
 
     handleSelection(id) {
 
         let updatedCursorPosition = this.insertAtCursor(this.textAreaElement.current, document.getElementById(id).innerText + ' ')
-        this.state.showDropDown = false;
-
-        console.log('Updated Cursor Position: ' + updatedCursorPosition)
+        this.setState({ showDropDown: false })
 
         setTimeout(() => {
             this.textAreaElement.current.focus({ preventScroll: true })
@@ -320,9 +309,6 @@ export default class TextAreaWithMentions extends Component {
             this.textAreaElement.current.selectionEnd = updatedCursorPosition
             this.textAreaElement.current.setSelectionRange(updatedCursorPosition, updatedCursorPosition);
 
-            // Reset the change listener.   
-            // FIXME: Not working
-            console.log('Adding Text Area Focus Out Event Listener...')
             this.textAreaElement.current.addEventListener('focusout', this.onTextAreaFocusOut.bind(this))
         }, 100)
 
@@ -483,7 +469,6 @@ export default class TextAreaWithMentions extends Component {
             e.preventDefault();
             this.setCursorPosition(start, end);
             this.handleInput()
-            console.log('Adding Text Area Focus Out Event Listener...')
             this.textAreaElement.current.addEventListener('focusout', this.onTextAreaFocusOut.bind(this))
         }
     }
@@ -494,7 +479,6 @@ export default class TextAreaWithMentions extends Component {
     // Elements and the focus
 
     onListItemClick(event) {
-        console.log('ID of the button clicked: ' + event.currentTarget.id)
         this.handleSelection(event.currentTarget.id)
     }
 
@@ -522,8 +506,9 @@ export default class TextAreaWithMentions extends Component {
     handleInput() {
         this.highLightsDiv.current.innerHTML = this.applyHighlights(this.textAreaElement.current.value);
         var textArea = this.textAreaElement.current // document.getElementById('textarea')
-        var event = new Event('change')
-        textArea.dispatchEvent(event)
+
+        // Send the change.
+        this.props.onChange(this.textAreaElement.current.value)
     }
 
     render() {
@@ -550,12 +535,10 @@ export default class TextAreaWithMentions extends Component {
                         placeholder={this.props.placeholder || i18n.t('Add a comment...')}
                         class='TextArea'
                         style={{ height: this.DEFAULT_TEXT_VIEW_HEGHT }}
-                        onInput={this.onTextAreaInput.bind(this)}
                         onScroll={this.handleScroll.bind(this)}
                         onKeyDown={this.handleTextAreaKeyDown.bind(this)}
                         onFocusOut={this.onTextAreaFocusOut.bind(this)}
                         disabled={!this.props.editable}
-                        onChange={this.props.onChange}
                     >
                         {this.props.content}
                     </textarea>

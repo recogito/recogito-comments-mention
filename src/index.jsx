@@ -72,9 +72,9 @@ const CommentsWithMentions = props => {
     // All except draft reply
     const comments = all.filter(b => b != draftReply);
 
-    const onEditReply = evt => {
+    const onEditReply = value => {
         const prev = draftReply.value;
-        const updated = evt.target.value;
+        const updated = value;
 
         if (prev.length === 0 && updated.length > 0) {
             props.onAppendBody({ ...draftReply, value: updated });
