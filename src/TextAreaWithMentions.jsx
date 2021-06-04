@@ -142,14 +142,6 @@ export default class TextAreaWithMentions extends Component {
         this.backdropDiv.current.scrollLeft = this.textAreaElement.current.scrollLeft;
     }
 
-    // Read the values from the args and append the ul list items.
-    onTextAreaFocusOut(event) {
-        // Convert the value to markup text and send
-        let userFacingText = event.target.value
-        let markUpText = this.getMarkupStringFromUserFacingString(userFacingText)
-        this.handleTextAreaChange(markUpText)
-    }
-
     handleTextAreaChange(text) {
         console.log('Text Area Lost Focus: ' + text)
         if (this.currentAtMentionTextValue) {
@@ -282,10 +274,6 @@ export default class TextAreaWithMentions extends Component {
 
     showDropdown() {
         const coordinates = this.getCaretCoordinates(this.textAreaElement.current, this.textAreaElement.current.selectionEnd);
-
-        // So that false change events are not triggered.
-        this.textAreaElement.current.removeEventListener('focusout', this.onTextAreaFocusOut)
-
         // Account for Top scroll. 
         coordinates.top = coordinates.top - this.textAreaElement.current.scrollTop
         this.myDropDownDiv.current.style['top'] = coordinates.top + 20 + 'px';
@@ -308,8 +296,6 @@ export default class TextAreaWithMentions extends Component {
             this.textAreaElement.current.selectionStart = updatedCursorPosition
             this.textAreaElement.current.selectionEnd = updatedCursorPosition
             this.textAreaElement.current.setSelectionRange(updatedCursorPosition, updatedCursorPosition);
-
-            this.textAreaElement.current.addEventListener('focusout', this.onTextAreaFocusOut.bind(this))
         }, 100)
 
         this.handleInput()
@@ -469,7 +455,6 @@ export default class TextAreaWithMentions extends Component {
             e.preventDefault();
             this.setCursorPosition(start, end);
             this.handleInput()
-            this.textAreaElement.current.addEventListener('focusout', this.onTextAreaFocusOut.bind(this))
         }
     }
 
@@ -537,7 +522,6 @@ export default class TextAreaWithMentions extends Component {
                         style={{ height: this.DEFAULT_TEXT_VIEW_HEGHT }}
                         onScroll={this.handleScroll.bind(this)}
                         onKeyDown={this.handleTextAreaKeyDown.bind(this)}
-                        onFocusOut={this.onTextAreaFocusOut.bind(this)}
                         disabled={!this.props.editable}
                     >
                         {this.props.content}
