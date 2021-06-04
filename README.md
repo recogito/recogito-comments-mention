@@ -21,10 +21,9 @@ $ npm start
 $ npm run build
 ```
 
-## Using
+## Using the plugin
 
-
-```
+```html
 <html>
   <head>
     <script src="recogito.min.js"></script>
