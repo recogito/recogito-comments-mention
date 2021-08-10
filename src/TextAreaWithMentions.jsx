@@ -508,7 +508,7 @@ export default class TextAreaWithMentions extends Component {
                     </div>
                 </div>
                 <div ref={this.myFragment} class='container' id='myFragment'>
-                    <div ref={this.backdropDiv} style={{ height: this.DEFAULT_TEXT_VIEW_HEGHT }} class="backdrop" id='backdropDiv'>
+                    <div ref={this.backdropDiv} style={{ height: this.DEFAULT_TEXT_VIEW_HEGHT }} class={this.props.editable ? 'backdrop-white' : 'backdrop'} id='backdropDiv'>
                         <div ref={this.highLightsDiv} class='highlights' id='highlightsDiv'>
                         </div>
                     </div>

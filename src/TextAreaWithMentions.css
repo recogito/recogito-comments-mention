@@ -95,6 +95,7 @@ svg.a9s-annotationlayer .a9s-annotation.BLUE .a9s-inner {
     width: 95%;  /* To account for the dropdown button added to the top right corner. */
     resize: none;
     height: 100px;
+    overflow: hidden;
 }
 
 /* Highlights */
@@ -124,6 +125,7 @@ textarea {
     transition: transform 1s;
     width: 100%;
     height: 100% !important;
+    background-color: #ecf0f1;
 }
 
 .highlights {
@@ -160,11 +162,17 @@ textarea {
     outline: none;
   }
 
-  .backdrop {
-    background-color: #ecf0f1;
-  }
-
-  .highlights, textarea {
+  .backdrop-white {
+    position: absolute;
+    z-index: -1;
+    overflow: auto;
+    pointer-events: none;
+    transition: transform 1s;
+    width: 100%;
+    height: 100% !important;
+    background-color: #ffffff;
+}
+ .highlights, textarea {
     padding: 10px;
     font: 14px 'Open Sans', sans-serif;
     letter-spacing: 1px;
