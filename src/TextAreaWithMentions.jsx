@@ -7,7 +7,6 @@ import i18n from '@recogito/recogito-client-core/src/i18n';
  */
 export default class TextAreaWithMentions extends Component {
 
-    static DEFAULT_TEXT_VIEW_HEGHT = 104;
     currentAtMentionTextValue = ''
     myFragment
     dropdownDivHolderDiv
@@ -37,7 +36,6 @@ export default class TextAreaWithMentions extends Component {
         this.backdropDiv = React.createRef()
         this.highLightsDiv = React.createRef()
         this.textAreaElement = React.createRef()
-
         this.state = { showDropDown: false, backupUsers: users, users: users, usersMap: {} }
     }
 
@@ -129,6 +127,9 @@ export default class TextAreaWithMentions extends Component {
         this.mirrorDivDisplayCheckbox = document.getElementById('mirrorDivDisplay');
         this.textAreaElement.current.focus();
         this.textAreaElement.current.select();
+
+        // Code to reize the text area based on the text entered.
+        window.setTimeout(this.resize.bind(this), 0);
     }
 
     applyHighlights(text) {
@@ -467,30 +468,37 @@ export default class TextAreaWithMentions extends Component {
         this.handleSelection(event.currentTarget.id)
     }
 
-    // TODO: if we plan to implement Auto-resize.
-    // var text = textAreaElement
-    // function resize() {
-    //     textAreaElement.style.height = 'auto';
-    //     textAreaElement.style.height = text.scrollHeight > DEFAULT_TEXT_VIEW_HEGHT ? text.scrollHeight + 'px' : DEFAULT_TEXT_VIEW_HEGHT + 'px';
 
-    //     backdropDiv.style.height = 'auto';
-    //     backdropDiv.style.height = textAreaElement.style.height;
-    // }
+    resize() {
+
+        var MAX_HEIGHT = 150;
+
+        var textAreaElement = this.textAreaElement.current
+        var text = textAreaElement.value
+
+        textAreaElement.style.height = 'auto';
+
+        var heightToConsider = 0
+        if (textAreaElement.scrollHeight > MAX_HEIGHT) {
+            heightToConsider = MAX_HEIGHT
+        }
+        else {
+            heightToConsider = textAreaElement.scrollHeight + 10
+        }
+
+        textAreaElement.style.height = heightToConsider + 'px'
+
+        this.backdropDiv.current.style.height = 'auto';
+        this.backdropDiv.current.style.height = textAreaElement.style.height;
+    }
 
     // /* 0-timeout to get the already changed text */
-    // function delayedResize() {
-    //     window.setTimeout(resize, 0);
-    // }
-    // observe(text, 'change', resize);
-    // observe(text, 'cut', delayedResize);
-    // observe(text, 'paste', delayedResize);
-    // observe(text, 'drop', delayedResize);
-    // observe(text, 'keydown', delayedResize);
-
+    delayedResize() {
+        window.setTimeout(this.resize, 0);
+    }
 
     handleInput() {
         this.highLightsDiv.current.innerHTML = this.applyHighlights(this.textAreaElement.current.value);
-        var textArea = this.textAreaElement.current // document.getElementById('textarea')
 
         // Send the change.
         this.props.onChange(this.textAreaElement.current.value)
@@ -508,7 +516,7 @@ export default class TextAreaWithMentions extends Component {
                     </div>
                 </div>
                 <div ref={this.myFragment} class='container' id='myFragment'>
-                    <div ref={this.backdropDiv} style={{ height: this.DEFAULT_TEXT_VIEW_HEGHT }} class={this.props.editable ? 'backdrop-white' : 'backdrop'} id='backdropDiv'>
+                    <div ref={this.backdropDiv} class={this.props.editable ? 'backdrop-white' : 'backdrop'} id='backdropDiv'>
                         <div ref={this.highLightsDiv} class='highlights' id='highlightsDiv'>
                         </div>
                     </div>
@@ -516,14 +524,19 @@ export default class TextAreaWithMentions extends Component {
                         ref={this.textAreaElement}
                         id='textarea'
                         class='textareaStyle'
-                        rows='3'
+
                         placeholder={this.props.placeholder || i18n.t('Add a comment...')}
                         class='TextArea'
-                        style={{ height: this.DEFAULT_TEXT_VIEW_HEGHT }}
+
                         onScroll={this.handleScroll.bind(this)}
                         onKeyDown={this.handleTextAreaKeyDown.bind(this)}
                         disabled={!this.props.editable}
-                    >
+                        onChange={this.resize.bind(this)}
+                        onCut={this.delayedResize.bind(this)}
+                        onPaste={this.delayedResize.bind(this)}
+                        onDrop={this.delayedResize.bind(this)}
+                        onKeydown={this.delayedResize.bind(this)}>
+
                         {this.props.content}
                     </textarea>
                 </div>
