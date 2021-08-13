@@ -471,7 +471,7 @@ export default class TextAreaWithMentions extends Component {
 
     resize() {
 
-        var MAX_HEIGHT = 150;
+        var MAX_HEIGHT = 130;
 
         var textAreaElement = this.textAreaElement.current
         var text = textAreaElement.value
@@ -516,7 +516,7 @@ export default class TextAreaWithMentions extends Component {
                     </div>
                 </div>
                 <div ref={this.myFragment} class='container' id='myFragment'>
-                    <div ref={this.backdropDiv} class={this.props.editable ? 'backdrop-white' : 'backdrop'} id='backdropDiv'>
+                    <div ref={this.backdropDiv} class={this.props.editable ? 'backdrop' : 'backdrop-white'} id='backdropDiv'>
                         <div ref={this.highLightsDiv} class='highlights' id='highlightsDiv'>
                         </div>
                     </div>
@@ -524,7 +524,7 @@ export default class TextAreaWithMentions extends Component {
                         ref={this.textAreaElement}
                         id='textarea'
                         class='textareaStyle'
-
+                        rows='1'
                         placeholder={this.props.placeholder || i18n.t('Add a comment...')}
                         class='TextArea'
 
