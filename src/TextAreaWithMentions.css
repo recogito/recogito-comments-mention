@@ -61,12 +61,6 @@ svg.a9s-annotationlayer .a9s-annotation.BLUE .a9s-inner {
     background-color: #2980B9;
 }
 
-.dropdown {
-    position: absolute !important;
-    display: inline-block;
-    z-index: 2;
-}
-
 .dropdown-content {
     display: none;
     position: absolute;
