@@ -125,8 +125,6 @@ export default class TextAreaWithMentions extends Component {
 
         this.isFirefox = !(window.mozInnerScreenX == null);
         this.mirrorDivDisplayCheckbox = document.getElementById('mirrorDivDisplay');
-        this.textAreaElement.current.focus();
-        this.textAreaElement.current.select();
 
         // Code to reize the text area based on the text entered.
         window.setTimeout(this.resize.bind(this), 0);
