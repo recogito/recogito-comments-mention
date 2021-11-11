@@ -471,6 +471,10 @@ export default class TextAreaWithMentions extends Component {
 
         var MAX_HEIGHT = 130;
 
+        if (!this.textAreaElement) {
+            return;
+        }
+
         var textAreaElement = this.textAreaElement.current
         var text = textAreaElement.value
 
