@@ -475,6 +475,17 @@ export default class TextAreaWithMentions extends Component {
             return;
         }
 
+        // Reset the Caret Position
+        // This is required for apps running within Windows UWP app.
+        // Accounting for the React JS way of doing things as explained here:
+        // https://stackoverflow.com/questions/35535688/stop-cursor-jumping-when-formatting-number-in-react
+        const caret = this.textAreaElement.current.selectionStart
+        const element = this.textAreaElement.current
+        window.requestAnimationFrame(() => {
+            element.selectionStart = caret
+            element.selectionEnd = caret
+        })
+
         var textAreaElement = this.textAreaElement.current
         var text = textAreaElement.value
 
