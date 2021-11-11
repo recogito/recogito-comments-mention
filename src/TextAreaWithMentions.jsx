@@ -246,7 +246,7 @@ export default class TextAreaWithMentions extends Component {
 
     onTextAreaInput(event) {
         const textareaText = event.target.value
-        const cursorPosition = this.textAreaElement.current.selectionStart
+        const cursorPosition = this.getCursorPosition()[0]
 
         let textForConsideration = textareaText.substring(0, cursorPosition)
         let lastIndexOfSpaceCharacter = textForConsideration.lastIndexOf(' ')
@@ -396,7 +396,8 @@ export default class TextAreaWithMentions extends Component {
         if ('selectionStart' in el) {
             pos = el.selectionStart;
             posEnd = el.selectionEnd;
-        } else if ('selection' in document) {
+        }
+        else if ('selection' in document) {
             el.focus();
             var Sel = document.selection.createRange();
             var SelLength = document.selection.createRange().text.length;
@@ -408,8 +409,21 @@ export default class TextAreaWithMentions extends Component {
     };
 
     setCursorPosition(start, end) {
-        this.textAreaElement.current.selectionStart = start
-        this.textAreaElement.current.selectionEnd = end
+        var el = this.textAreaElement.current;
+        if ('selectionStart' in el) {
+            console.log('Setting Cursor position for non IE Browser')
+            this.textAreaElement.current.selectionStart = start
+            this.textAreaElement.current.selectionEnd = end
+        }
+        else if ('selection' in document) {
+            console.log('Setting Cursor position for IE')
+            el.focus();
+            var selection = document.selection.createRange();
+            selection.moveStart('character', -el.value.length);
+            selection.moveStart('character', position);
+            selection.moveEnd('character', 0);
+            selection.select();
+        }
     }
 
     handleTextAreaKeyDown(e) {
