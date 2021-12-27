@@ -76,14 +76,6 @@ export default class TextAreaWithMentions extends Component {
         this.clearChildNodes(this.unorderedList.current)
         this.appendChildNodes(this.unorderedList.current, this.state.users)
 
-        // Close the dropdown if the user clicks outside of it
-        var that = this
-        window.onclick = function (event) {
-            if (!event.target.matches('.dropbtn')) {
-                that.hideDropdown()
-            }
-        }
-
         // The properties that we copy into a mirrored div.
         // Note that some browsers, such as Firefox,
         // do not concatenate properties, i.e. padding-top, bottom etc. -> padding,
@@ -259,12 +251,6 @@ export default class TextAreaWithMentions extends Component {
                 this.appendChildNodes(this.unorderedList.current, filteredUsers)
                 this.showDropdown()
             }
-            else {
-                this.hideDropdown()
-            }
-        }
-        else {
-            this.hideDropdown()
         }
         this.handleInput()
     }
@@ -279,10 +265,6 @@ export default class TextAreaWithMentions extends Component {
         this.myDropDownDiv.current.style['left'] = coordinates.left + 'px';
 
         this.setState({ showDropDown: true })
-    }
-
-    hideDropdown() {
-        this.setState({ showDropDown: false })
     }
 
     handleSelection(id) {
