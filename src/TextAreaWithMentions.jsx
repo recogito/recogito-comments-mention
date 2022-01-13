@@ -36,7 +36,12 @@ export default class TextAreaWithMentions extends Component {
         this.backdropDiv = React.createRef()
         this.highLightsDiv = React.createRef()
         this.textAreaElement = React.createRef()
-        this.state = { showDropDown: false, backupUsers: users, users: users, usersMap: {} }
+
+        /**
+         * |content| holds the text that is displayed by the text area.
+         * |highlightedContent| holds the text in the background.
+         */
+        this.state = { showDropDown: false, backupUsers: users, users: users, usersMap: {}, content: props.content, highlightedContent: '' }
     }
 
     componentDidMount() {
@@ -67,7 +72,7 @@ export default class TextAreaWithMentions extends Component {
         }
 
         // Highlight @users.
-        this.handleInput()
+        this.highlightAtMentions()
 
         var defaultFocus = 't-0';
         this.currentFocus = defaultFocus;
@@ -252,7 +257,9 @@ export default class TextAreaWithMentions extends Component {
                 this.showDropdown()
             }
         }
-        this.handleInput()
+        this.setState( {content: event.target.value}, function() {
+            this.highlightAtMentions()
+        })
     }
 
     ////////// UPDATE COMPLETE ////////
@@ -267,42 +274,38 @@ export default class TextAreaWithMentions extends Component {
         this.setState({ showDropDown: true })
     }
 
+    /**
+     * Selection event handler for the @mention dropdown.
+     * @param id The ID of the element from which the selected option can be read
+     */
     handleSelection(id) {
 
-        let updatedCursorPosition = this.insertAtCursor(this.textAreaElement.current, document.getElementById(id).innerText + ' ')
-        this.setState({ showDropDown: false })
+        var that = this
 
-        setTimeout(() => {
-            this.textAreaElement.current.focus({ preventScroll: true })
-            this.textAreaElement.current.selectionStart = updatedCursorPosition
-            this.textAreaElement.current.selectionEnd = updatedCursorPosition
-            this.textAreaElement.current.setSelectionRange(updatedCursorPosition, updatedCursorPosition);
-        }, 100)
-
-        this.handleInput()
+        this.insertAtCursor(this.textAreaElement.current, document.getElementById(id).innerText + ' ', function(updatedCursorPosition) {
+            that.setState({ showDropDown: false })
+    
+            setTimeout(() => {
+                that.textAreaElement.current.focus({ preventScroll: true })
+                that.textAreaElement.current.selectionStart = updatedCursorPosition
+                that.textAreaElement.current.selectionEnd = updatedCursorPosition
+                that.textAreaElement.current.setSelectionRange(updatedCursorPosition, updatedCursorPosition);
+            }, 100)
+    
+            that.highlightAtMentions()
+        })
     }
 
-    insertAtCursor(myField, myValue) {
-        //IE support
-        if (document.selection) {
-            myField.focus();
-            sel = document.selection.createRange();
-            sel.text = myValue;
-        }
-        //MOZILLA and others
-        else if (myField.selectionStart || myField.selectionStart == '0') {
+    insertAtCursor(myField, myValue, callback) {
+        let textForConsideration = this.state.content.substring(0, myField.selectionStart)
+        var startPos = textForConsideration.lastIndexOf('@') + 1
+        let endPos = myField.selectionEnd;
+        let updatedContent = this.state.content.substring(0, startPos) + myValue + this.state.content.substring(endPos, this.state.content.length);
+        let cursorPosition = startPos + updatedContent.length
 
-            let textForConsideration = myField.value.substring(0, myField.selectionStart)
-            var startPos = textForConsideration.lastIndexOf('@') + 1
-
-            let endPos = myField.selectionEnd;
-            myField.value = myField.value.substring(0, startPos)
-                + myValue
-                + myField.value.substring(endPos, myField.value.length);
-        } else {
-            myField.value += myValue;
-        }
-        return startPos + myValue.length
+        this.setState({ content: updatedContent }, function () {
+            callback(cursorPosition)
+        })
     }
 
     getCaretCoordinates(element, position) {
@@ -408,51 +411,6 @@ export default class TextAreaWithMentions extends Component {
         }
     }
 
-    handleTextAreaKeyDown(e) {
-        var position = this.getCursorPosition();
-        var deleted = '';
-        var val = this.textAreaElement.current.value;
-        if (e.which != 8) {
-            return true;
-        }
-
-        if (position[0] != position[1]) {
-            return true;
-        }
-
-        if (position[0] <= 0) {
-            return true;
-        }
-
-        let charToDelete = val.substr(position[0] - 1, 1);
-        if (charToDelete == " ") {
-            return true;
-        }
-
-        // Is the word to be deleted, contains @mention
-        let textForConsideration = val.substring(0, position[0])
-        let lastIndexOfSpaceCharacter = textForConsideration.lastIndexOf(' ')
-        let lastIndexOfAtCharacter = textForConsideration.lastIndexOf('@')
-        if (lastIndexOfSpaceCharacter > lastIndexOfAtCharacter) {   // Not referring to @mention word.
-            return true;
-        }
-
-        let nextChar = val.substr(position[0], 1);
-
-        if (nextChar == " " || nextChar == "") {
-            var start = position[0];
-            var end = position[0];
-
-            while (val.substr(start - 1, 1) != " " && start - 1 >= 0) {
-                start -= 1;
-            }
-
-            e.preventDefault();
-            this.setCursorPosition(start, end);
-            this.handleInput()
-        }
-    }
-
     /////////// END - Remove @mention words on backspace ////////
 
 
@@ -506,11 +464,11 @@ export default class TextAreaWithMentions extends Component {
         window.setTimeout(this.resize, 0);
     }
 
-    handleInput() {
-        this.highLightsDiv.current.innerHTML = this.applyHighlights(this.textAreaElement.current.value);
-
-        // Send the change.
-        this.props.onChange(this.textAreaElement.current.value)
+    highlightAtMentions() {
+        let highLightedContent = this.applyHighlights(this.state.content);
+        this.setState( { highlightedContent: highLightedContent }, function() {
+            this.props.onChange(this.state.content) // Send the change.
+        })
     }
 
     render() {
@@ -526,7 +484,7 @@ export default class TextAreaWithMentions extends Component {
                 </div>
                 <div ref={this.myFragment} class='container' id='myFragment'>
                     <div ref={this.backdropDiv} class={this.props.editable ? 'backdrop' : 'backdrop-white'} id='backdropDiv'>
-                        <div ref={this.highLightsDiv} class='highlights' id='highlightsDiv'>
+                        <div ref={this.highLightsDiv} class='highlights' id='highlightsDiv' innerHTML={this.state.highlightedContent}>
                         </div>
                     </div>
                     <textarea
@@ -538,19 +496,15 @@ export default class TextAreaWithMentions extends Component {
                         class='TextArea'
 
                         onScroll={this.handleScroll.bind(this)}
-                        onKeyDown={this.handleTextAreaKeyDown.bind(this)}
                         disabled={!this.props.editable}
                         onChange={this.resize.bind(this)}
                         onCut={this.delayedResize.bind(this)}
                         onPaste={this.delayedResize.bind(this)}
                         onDrop={this.delayedResize.bind(this)}
-                        onKeydown={this.delayedResize.bind(this)}>
-
-                        {this.props.content}
+                        onKeydown={this.delayedResize.bind(this)} value= {this.state.content}>
                     </textarea>
                 </div>
             </div>
-
         )
     }
 }
