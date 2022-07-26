@@ -125,8 +125,19 @@ export default class TextAreaWithMentions extends Component {
 
         // Code to reize the text area based on the text entered.
         window.setTimeout(this.resize.bind(this), 0);
+    
+        /**
+         * Setting the focus for the text area so that when the comment popup opens up, user can actually type in the text area.
+         * If we directly call the focus() without the timeout, then the background content was scrolling up.
+         * So, we have added a delay to account for it.
+         */
+        window.setTimeout(this.setTextAreaFocus.bind(this), 100)
     }
 
+    setTextAreaFocus() {
+        this.textAreaElement.current.focus()
+    }
+    
     applyHighlights(text) {
         return text
             .replace(/\n$/g, '\n\n')
